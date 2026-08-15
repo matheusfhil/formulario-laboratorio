@@ -2,16 +2,18 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
+import os # <-- Adicione isso
 
 def conectar_planilha():
     escopo = [
         'https://spreadsheets.google.com/feeds',
         'https://www.googleapis.com/auth/drive'
     ]
-    # Aqui está a mágica: ele lê a credencial escondida no servidor do Streamlit
-    credenciais_dict = json.loads(st.secrets["gcp_service_account"])
-    credenciais = ServiceAccountCredentials.from_json_keyfile_dict(credenciais_dict, escopo)
     
+    # Aqui mudamos para ler do ambiente (Variável que vamos criar no Google Cloud)
+    credenciais_dict = json.loads(os.environ["GCP_CREDENTIALS"])
+    
+    credenciais = ServiceAccountCredentials.from_json_keyfile_dict(credenciais_dict, escopo)
     cliente = gspread.authorize(credenciais)
     planilha = cliente.open('Solicitacoes_Laboratorio').sheet1
     return planilha
