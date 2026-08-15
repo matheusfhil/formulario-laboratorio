@@ -1,0 +1,18 @@
+# Usa uma versão leve do Python
+FROM python:3.9-slim
+
+# Define a pasta de trabalho dentro do servidor
+WORKDIR /app
+
+# Copia os arquivos do seu computador/GitHub para o servidor
+COPY requirements.txt ./
+COPY app.py ./
+
+# Instala as bibliotecas
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Expõe a porta 8080 (Obrigatório no Cloud Run)
+EXPOSE 8080
+
+# Comando para rodar o Streamlit
+CMD ["streamlit", "run", "app.py", "--server.port=8080", "--server.address=0.0.0.0"]
